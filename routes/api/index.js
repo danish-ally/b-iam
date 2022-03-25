@@ -1,8 +1,11 @@
-const router = require('express').Router();
+const router = require("express").Router();
 
-const leadRoutes = require('./lead');
+const authRoutes = require("./auth");
+const leadRoutes = require("./lead");
 
 // lead routes
-router.use('/lead', leadRoutes);
+router.use("/lead", leadRoutes);
+// auth routes
+router.use("/auth", authRoutes);
 
 module.exports = router;

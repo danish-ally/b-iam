@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-
+const auth = require("../../middleware/auth");
 const Lead = require("../../models/lead");
 
 // get All lead
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     const leads = await Lead.find();
     res.json(leads);
@@ -32,7 +32,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Add lead
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const lead = new Lead(Object.assign(req.body));
 
   try {
