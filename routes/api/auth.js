@@ -8,7 +8,8 @@ const auth = require("../../middleware/auth");
 const User = require("../../models/user");
 const key = require("../../config/key");
 
-const { secret, tokenLife } = key.jwt;
+const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } = key.jwt;
+
 
 router.post("/login", (req, res) => {
   const email = req.body.email;
@@ -35,10 +36,10 @@ router.post("/login", (req, res) => {
           id: user.id,
         };
 
-        jwt.sign(payload, secret, { expiresIn: tokenLife }, (err, token) => {
+        jwt.sign(payload, accessSecret, { expiresIn: accessTokenLife }, (err, AccessToken) => {
           res.status(200).json({
             success: true,
-            token: `Bearer ${token}`,
+            AccessToken: `Bearer ${AccessToken}`,
             user: {
               id: user.id,
               firstName: user.firstName,
@@ -48,6 +49,20 @@ router.post("/login", (req, res) => {
             },
           });
         });
+
+        // jwt.sign(payload, refreshSecret, { expiresIn: refreshTokenLife }, (err, RefreshToken) => {
+        //   res.status(200).json({
+        //     success: true,
+        //     RefreshToken: `Bearer ${RefreshToken}`,
+        //     user: {
+        //       id: user.id,
+        //       firstName: user.firstName,
+        //       lastName: user.lastName,
+        //       email: user.email,
+        //       role: user.role,
+        //     },
+        //   });
+        // });
       } else {
         res.status(400).json({
           success: false,

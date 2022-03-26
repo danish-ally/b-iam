@@ -8,11 +8,17 @@ const mongoose = require('mongoose');
 
 
 const User = mongoose.model('User');
-const secret = process.env.JWT_SECRET;
+const accessSecret = process.env.JWT_SECRET_ACCESS;
+// const refreshSecret = process.env.JWT_SECRET_ACCESS;
+
 
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = secret;
+opts.secretOrKey = accessSecret;
+
+// const opts2 = {};
+// opts2.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+// opts2.secretOrKey = refreshSecret;
 
 passport.use(
   new JwtStrategy(opts, (payload, done) => {
@@ -30,3 +36,18 @@ passport.use(
   })
 );
 
+// passport.use(
+//   new JwtStrategy(opts2, (payload, done) => {
+//     User.findById(payload.id)
+//       .then(user => {
+//         if (user) {
+//           return done(null, user);
+//         }
+
+//         return done(null, false);
+//       })
+//       .catch(err => {
+//         return done(err, false);
+//       });
+//   })
+// );
