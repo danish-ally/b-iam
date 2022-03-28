@@ -8,8 +8,8 @@ const auth = require("../../middleware/auth");
 const User = require("../../models/user");
 const key = require("../../config/key");
 
-const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } = key.jwt;
-
+const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } =
+  key.jwt;
 
 router.post("/login", (req, res) => {
   const email = req.body.email;
@@ -36,19 +36,24 @@ router.post("/login", (req, res) => {
           id: user.id,
         };
 
-        jwt.sign(payload, accessSecret, { expiresIn: accessTokenLife }, (err, AccessToken) => {
-          res.status(200).json({
-            success: true,
-            AccessToken: `Bearer ${AccessToken}`,
-            user: {
-              id: user.id,
-              firstName: user.firstName,
-              lastName: user.lastName,
-              email: user.email,
-              role: user.role,
-            },
-          });
-        });
+        jwt.sign(
+          payload,
+          accessSecret,
+          { expiresIn: accessTokenLife },
+          (err, AccessToken) => {
+            res.status(200).json({
+              success: true,
+              AccessToken: `Bearer ${AccessToken}`,
+              user: {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role,
+              },
+            });
+          }
+        );
 
         // jwt.sign(payload, refreshSecret, { expiresIn: refreshTokenLife }, (err, RefreshToken) => {
         //   res.status(200).json({
@@ -119,7 +124,9 @@ router.post("/register", async (req, res) => {
       id: registeredUser._id,
     };
 
-    const token = jwt.sign(payload, secret, { expiresIn: tokenLife });
+    const token = jwt.sign(payload, accessSecret, {
+      expiresIn: accessTokenLife,
+    });
 
     res.status(200).json({
       success: true,
@@ -138,5 +145,6 @@ router.post("/register", async (req, res) => {
     });
   }
 });
+
 
 module.exports = router;

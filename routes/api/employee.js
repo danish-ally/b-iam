@@ -1,0 +1,169 @@
+const express = require("express");
+const router = express.Router();
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const passport = require("passport");
+const auth = require("../../middleware/auth");
+const User = require("../../models/user");
+const key = require("../../config/key");
+const role = require("../../helpers/role");
+
+router.post("/new", async (req, res) => {
+  try {
+    const email = req.body.email;
+    const code = req.body.code;
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
+    const username = firstName + code;
+    const password = req.body.password;
+
+    if (!email) {
+      return res
+        .status(400)
+        .json({ error: "You must enter an email address." });
+    }
+    if (!code) {
+        return res
+          .status(400)
+          .json({ error: "You must enter an code" });
+      }
+  
+    if (!firstName || !lastName) {
+      return res.status(400).json({ error: "You must enter your full name." });
+    }
+
+    if (!password) {
+      return res.status(400).json({ error: "You must enter a password." });
+    }
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ error: "That email address is already in use." });
+    }
+
+    const user = new User({
+      email,
+      code,
+      password,
+      firstName,
+      lastName,
+      username,
+      role: role.Employee,
+    });
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(user.password, salt);
+
+    user.password = hash;
+    const registeredUser = await user.save();
+
+    res.status(200).json({
+      success: true,
+      user: {
+        id: registeredUser.id,
+        code: registeredUser.code,
+        firstName: registeredUser.firstName,
+        lastName: registeredUser.lastName,
+        username: registeredUser.username,
+        email: registeredUser.email,
+        role: registeredUser.role,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      error: "Your request could not be processed. Please try again.",
+    });
+  }
+});
+
+// fetch all employees api
+router.get("/", async (req, res) => {
+  try {
+    const employees = await (
+      await User.find()
+    ).filter((user) => user.role === "ROLE_EMPLOYEE" && user.isActive === true);
+
+    res.json(employees);
+  } catch (err) {
+    if (err) {
+      return res.status(400).json({
+        error: "Your request could not be processed. Please try again.",
+      });
+    }
+  }
+});
+
+// get Emp by id
+router.get("/:id", async (req, res) => {
+  try {
+    const employeeId = req.params.id;
+
+    const employeeDoc = await User.findOne({ _id: employeeId });
+
+    if (!employeeDoc) {
+      res.status(404).json({
+        message: `Cannot find Employee with the id: ${employeeId}.`,
+      });
+    }
+
+    res.status(200).json({
+      employee: employeeDoc,
+    });
+  } catch (error) {
+    res.status(400).json({
+      error: "Your request could not be processed. Please try again.",
+    });
+  }
+});
+
+// update emp
+router.put("/:id", async (req, res) => {
+  try {
+    const employeeId = req.params.id;
+    const update = req.body;
+    const query = { _id: employeeId };
+
+    await User.findOneAndUpdate(query, update, {
+      new: true,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Employee has been updated successfully!",
+    });
+  } catch (error) {
+    res.status(400).json({
+      error: "Your request could not be processed. Please try again.",
+    });
+  }
+});
+
+// delete emp by id
+router.delete("/:id", async (req, res) => {
+  try {
+    const employeeId = req.params.id;
+    const update = {
+      isActive: false,
+    };
+    const query = { _id: employeeId };
+
+    await User.findOneAndUpdate(query, update, {
+      new: true,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Employee has been deleted successfully!",
+    });
+  } catch (error) {
+    res.status(400).json({
+      error: "Your request could not be processed. Please try again.",
+    });
+  }
+});
+
+module.exports = router;

@@ -1,4 +1,6 @@
+const { Long } = require("mongodb");
 const Mongoose = require("mongoose");
+const role = require("../helpers/role");
 
 const { Schema } = Mongoose;
 
@@ -10,10 +12,16 @@ const UserSchema = new Schema({
       return this.provider !== "email" ? false : true;
     },
   },
+  code: {
+    type: String,
+  },
   firstName: {
     type: String,
   },
   lastName: {
+    type: String,
+  },
+  username: {
     type: String,
   },
   password: {
@@ -21,8 +29,11 @@ const UserSchema = new Schema({
   },
   role: {
     type: String,
-    default: "ROLE_MEMBER",
-    enum: ["ROLE_MEMBER", "ROLE_ADMIN", "ROLE_EMPLOYEE", "ROLE_DISTRIBUTOR"],
+    default: role.Member,
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
   },
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
