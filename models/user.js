@@ -14,18 +14,22 @@ const UserSchema = new Schema({
   },
   code: {
     type: String,
+    unique: true,
   },
   firstName: {
     type: String,
+    required: true,
   },
   lastName: {
     type: String,
+    required: true,
   },
   username: {
     type: String,
   },
   password: {
     type: String,
+    required: true,
   },
   role: {
     type: String,
