@@ -2,7 +2,7 @@ const Mongoose = require("mongoose");
 const { Schema } = Mongoose;
 
 // Lead Schema
-const DistributorSchema = new Schema({
+const storeSchema = new Schema({
   _id: {
     type: Schema.ObjectId,
     auto: true,
@@ -13,26 +13,27 @@ const DistributorSchema = new Schema({
     ref: "User",
   },
 
-  distributorId: {
-    type: String,
-    required: true,
+  code: {
+    type: Number,
     unique: true,
   },
-
-  firstName: {
-    type: String,
-    required: true,
-  },
-  lastName: {
+  name: {
     type: String,
     required: true,
   },
 
-  email: {
+  description: {
     type: String,
-    required: () => {
-      return this.provider !== "email" ? false : true;
-    },
+    required: true,
+  },
+  address: {
+    type: String,
+    required: true,
+  },
+
+  city: {
+    type: Schema.Types.ObjectId,
+    required: true,
   },
 
   phoneNo: {
@@ -40,47 +41,25 @@ const DistributorSchema = new Schema({
     required: true,
   },
 
-  aadharNumber: {
+  profilePhoto: {
+    type: String,
+  },
+
+  dateOfOpening: {
+    type: Date,
+    required: true,
+  },
+
+  openingHoursFrom: {
     type: String,
     required: true,
   },
 
-  isAadharVerified: {
-    type: Boolean,
-    required: true,
-  },
-
-  panNumber: {
+  openingHoursTo: {
     type: String,
     required: true,
   },
-
-  isPanVerified: {
-    type: Boolean,
-    required: true,
-  },
-
-  businessName: {
-    type: String,
-    required: true,
-  },
-
-  businessAddress: {
-    type: String,
-    required: true,
-  },
-
-  gstNumber: {
-    type: String,
-    required: true,
-  },
-
-  state: {
-    type: String,
-    required: true,
-  },
-
-  city: {
+  operationalDays: {
     type: String,
     required: true,
   },
@@ -90,21 +69,10 @@ const DistributorSchema = new Schema({
     required: true,
   },
 
-  landmark: {
-    type: String,
-    required: true,
-  },
-
   isActive: {
     type: Boolean,
     default: true,
   },
-
-  agreement: {
-    type: Boolean,
-    required: true,
-  },
-
   updated: Date,
   created: {
     type: Date,
@@ -112,4 +80,4 @@ const DistributorSchema = new Schema({
   },
 });
 
-module.exports = Mongoose.model("Distributor", DistributorSchema);
+module.exports = Mongoose.model("Store", storeSchema);

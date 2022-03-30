@@ -22,17 +22,19 @@ router.get("/", auth, async (req, res) => {
 
 //get All Distributors By User Id
 router.get("/list", auth, async (req, res) => {
-  Distributor.find({ user: req.user._id }, (err, data) => {
+  try {
+    const distributors = await (
+      await Distributor.find({ user: req.params.id })
+    ).filter((distributor) => distributor.isActive === true);
+
+    res.json(distributors);
+  } catch (err) {
     if (err) {
       return res.status(400).json({
         error: "Your request could not be processed. Please try again.",
       });
     }
-
-    res.status(200).json({
-      distributors: data,
-    });
-  });
+  }
 });
 
 // get distributor by id
