@@ -9,26 +9,29 @@ const User = require("../../models/user");
 const key = require("../../config/key");
 const role = require("../../helpers/role");
 
-router.post("/new", async (req, res) => {
-  try {
-    const email = req.body.email;
-    const code = req.body.code;
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
-    const username = firstName + code;
-    const password = req.body.password;
+const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } =
+  key.jwt;
 
+router.post("/new", auth, async (req, res) => {
+  const auth = req.user;
+  const email = req.body.email;
+  const code = req.body.code;
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  const username = firstName + code;
+  const password = req.body.password;
+  const user = auth._id;
+
+  try {
     if (!email) {
       return res
         .status(400)
         .json({ error: "You must enter an email address." });
     }
     if (!code) {
-        return res
-          .status(400)
-          .json({ error: "You must enter an code" });
-      }
-  
+      return res.status(400).json({ error: "You must enter an code" });
+    }
+
     if (!firstName || !lastName) {
       return res.status(400).json({ error: "You must enter your full name." });
     }
@@ -45,25 +48,35 @@ router.post("/new", async (req, res) => {
         .json({ error: "That email address is already in use." });
     }
 
-    const user = new User({
+    const emp = new User({
       email,
       code,
       password,
       firstName,
       lastName,
       username,
+      user,
       role: role.Employee,
     });
 
     const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(user.password, salt);
+    const hash = await bcrypt.hash(emp.password, salt);
 
-    user.password = hash;
-    const registeredUser = await user.save();
+    emp.password = hash;
+    const registeredUser = await emp.save();
+
+    const payload = {
+      id: registeredUser._id,
+    };
+
+    const token = jwt.sign(payload, accessSecret, {
+      expiresIn: accessTokenLife,
+    });
 
     res.status(200).json({
       success: true,
-      user: {
+      token: `Bearer ${token}`,
+      employee: {
         id: registeredUser.id,
         code: registeredUser.code,
         firstName: registeredUser.firstName,
@@ -71,6 +84,7 @@ router.post("/new", async (req, res) => {
         username: registeredUser.username,
         email: registeredUser.email,
         role: registeredUser.role,
+        user,
       },
     });
   } catch (error) {

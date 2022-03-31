@@ -36,24 +36,24 @@ router.get("/:id", async (req, res) => {
 
 // Add lead
 router.post("/", async (req, res) => {
-  const user = req.user;
+  // const user = req.user;
 
   const lead = new Lead(Object.assign(req.body));
 
-  try {
-    const l1 = await lead.save();
-    res.status(200).json({
-      success: true,
-      message: `Lead has been added successfully!`,
-      lead: l1,
-    });
-  } catch (err) {
-    if (err) {
-      return res.status(400).json({
-        error: "Your request could not be processed. Please try again.",
-      });
-    }
-  }
+  // try {
+  const l1 = await lead.save();
+  res.status(200).json({
+    success: true,
+    message: `Lead has been added successfully!`,
+    lead: l1,
+  });
+  // } catch (err) {
+  //   if (err) {
+  //     return res.status(400).json({
+  //       error: "Your request could not be processed. Please try again.",
+  //     });
+  //   }
+  // }
 });
 
 // update lead

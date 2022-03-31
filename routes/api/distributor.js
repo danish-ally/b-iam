@@ -1,7 +1,16 @@
 const express = require("express");
+const role = require("../../helpers/role");
 const auth = require("../../middleware/auth");
 const router = express.Router();
-const Distributor = require("../../models/distributor");
+const Distributor = require("../../models/user");
+const key = require("../../config/key");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const passport = require("passport");
+
+const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } =
+  key.jwt;
 
 // get All distributor
 router.get("/", auth, async (req, res) => {
@@ -53,23 +62,45 @@ router.get("/:id", async (req, res) => {
 
 // Add distributor
 router.post("/", auth, async (req, res) => {
-  const user = req.user;
-
-  const distributor = new Distributor(
-    Object.assign(req.body, { user: user._id })
+  const auth = req.user;
+  const user = new Distributor(
+    Object.assign(req.body, { role: role.Distributor }, { user: auth._id })
   );
-
   try {
-    const d1 = await distributor.save();
+    const email = user.email;
+
+    const existingUser = await Distributor.findOne({ email });
+
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ error: "That email address is already in use." });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    console.log("object");
+    const hash = await bcrypt.hash(user.password, salt);
+
+    user.password = hash;
+    const registeredUser = await user.save();
+    const payload = {
+      id: registeredUser._id,
+    };
+
+    const token = jwt.sign(payload, accessSecret, {
+      expiresIn: accessTokenLife,
+    });
+
     res.status(200).json({
       success: true,
-      message: `Distributor has been added successfully!`,
-      distributor: d1,
+      token: `Bearer ${token}`,
+      message: `Distributor has been registered successfully!`,
+      distributor: registeredUser,
     });
   } catch (err) {
     if (err) {
       return res.status(400).json({
-        error: "Your request could not be processed. Please try again.....",
+        error: "Your request could not be processed. Please try again.",
       });
     }
   }

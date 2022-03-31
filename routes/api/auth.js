@@ -80,24 +80,8 @@ router.post("/login", (req, res) => {
 
 router.post("/register", async (req, res) => {
   try {
-    const email = req.body.email;
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
-    const password = req.body.password;
-
-    if (!email) {
-      return res
-        .status(400)
-        .json({ error: "You must enter an email address." });
-    }
-
-    if (!firstName || !lastName) {
-      return res.status(400).json({ error: "You must enter your full name." });
-    }
-
-    if (!password) {
-      return res.status(400).json({ error: "You must enter a password." });
-    }
+    const user = new User(Object.assign(req.body));
+    const email = user.email;
 
     const existingUser = await User.findOne({ email });
 
@@ -107,19 +91,12 @@ router.post("/register", async (req, res) => {
         .json({ error: "That email address is already in use." });
     }
 
-    const user = new User({
-      email,
-      password,
-      firstName,
-      lastName,
-    });
-
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(user.password, salt);
 
     user.password = hash;
-    const registeredUser = await user.save();
 
+    const registeredUser = await user.save();
     const payload = {
       id: registeredUser._id,
     };
@@ -131,20 +108,16 @@ router.post("/register", async (req, res) => {
     res.status(200).json({
       success: true,
       token: `Bearer ${token}`,
-      user: {
-        id: registeredUser.id,
-        firstName: registeredUser.firstName,
-        lastName: registeredUser.lastName,
-        email: registeredUser.email,
-        role: registeredUser.role,
-      },
+      message: `User has been registered successfully!`,
+      user: registeredUser,
     });
-  } catch (error) {
-    res.status(400).json({
-      error: "Your request could not be processed. Please try again.",
-    });
+  } catch (err) {
+    if (err) {
+      return res.status(400).json({
+        error: "Your request could not be processed. Please try again.",
+      });
+    }
   }
 });
-
 
 module.exports = router;
