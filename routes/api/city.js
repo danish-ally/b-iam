@@ -34,7 +34,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Add lead
+// Add city
 router.post("/", async (req, res) => {
   const city = new City(Object.assign(req.body));
 
@@ -102,19 +102,19 @@ router.delete("/:id", async (req, res) => {
 
 // get All city by state Id
 router.get("/list/:id", async (req, res) => {
-    try {
-        const cities = await (
-          await City.find({ state: req.params.id })
-        ).filter((city) => city.isActive === true);
-    
-        res.json(cities);
-      } catch (err) {
-        if (err) {
-          return res.status(400).json({
-            error: "Your request could not be processed. Please try again.",
-          });
-        }
-      }
-  });
+  try {
+    const cities = await (
+      await City.find({ state: req.params.id })
+    ).filter((city) => city.isActive === true);
+
+    res.json(cities);
+  } catch (err) {
+    if (err) {
+      return res.status(400).json({
+        error: "Your request could not be processed. Please try again.",
+      });
+    }
+  }
+});
 
 module.exports = router;

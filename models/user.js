@@ -1,22 +1,20 @@
 const { Long } = require("mongodb");
 const Mongoose = require("mongoose");
 const role = require("../helpers/role");
-const shortid = require("shortid");
 
 const { Schema } = Mongoose;
 
 // User Schema
-console.log(shortid.generate());
+
 const UserSchema = new Schema({
   _id: {
     type: Schema.ObjectId,
     auto: true,
   },
 
-  // code: {
-  //   'type': String,
-  //   'default': shortid.generate,
-  // },
+  code: {
+    type: String,
+  },
 
   email: {
     type: String,

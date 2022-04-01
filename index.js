@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const { port } = require("./config/key");
@@ -25,7 +25,8 @@ mongoose
 require("./config/passport");
 app.use(routes);
 
-
 app.listen(port, () => {
   console.log(`Server listening on ${port}`);
 });
+
+

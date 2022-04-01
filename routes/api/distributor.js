@@ -8,6 +8,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const passport = require("passport");
+const mailgun = require("../../services/mailgun");
 
 const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } =
   key.jwt;
@@ -68,6 +69,7 @@ router.post("/", auth, async (req, res) => {
   );
   try {
     const email = user.email;
+    const password1 = user.password;
 
     const existingUser = await Distributor.findOne({ email });
 
@@ -78,7 +80,6 @@ router.post("/", auth, async (req, res) => {
     }
 
     const salt = await bcrypt.genSalt(10);
-    console.log("object");
     const hash = await bcrypt.hash(user.password, salt);
 
     user.password = hash;
@@ -86,6 +87,17 @@ router.post("/", auth, async (req, res) => {
     const payload = {
       id: registeredUser._id,
     };
+
+    console.log(password1);
+
+    await mailgun.sendEmail(
+      registeredUser.email,
+      password1,
+      "signup",
+      null,
+      registeredUser
+    );
+    console.log("distributor");
 
     const token = jwt.sign(payload, accessSecret, {
       expiresIn: accessTokenLife,
