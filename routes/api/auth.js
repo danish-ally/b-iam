@@ -43,7 +43,7 @@ router.post("/login", (req, res) => {
           (err, AccessToken) => {
             res.status(200).json({
               success: true,
-              AccessToken: `Bearer ${AccessToken}`,
+              AccessToken: `${AccessToken}`,
               user: {
                 id: user.id,
                 firstName: user.firstName,

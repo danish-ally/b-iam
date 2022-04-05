@@ -40,6 +40,12 @@ router.post("/new", auth, async (req, res) => {
       return res.status(400).json({ error: "You must enter a password." });
     }
 
+    const existingCode = await User.findOne({ code });
+
+    if (existingCode) {
+      return res.status(400).json({ error: "That code is already in use." });
+    }
+
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -95,7 +101,7 @@ router.post("/new", auth, async (req, res) => {
 });
 
 // fetch all employees api
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     const employees = await (
       await User.find()
