@@ -91,11 +91,14 @@ router.post("/register", async (req, res) => {
         .json({ error: "That email address is already in use." });
     }
 
+    console.log("first")
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(user.password, salt);
 
     user.password = hash;
 
+
+    console.log("first")
     const registeredUser = await user.save();
     const payload = {
       id: registeredUser._id,

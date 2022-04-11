@@ -18,7 +18,10 @@ router.get("/", auth, async (req, res) => {
   try {
     const distributors = await (
       await Distributor.find()
-    ).filter((distributor) => distributor.isActive === true);
+    ).filter(
+      (distributor) =>
+        distributor.isActive === true && distributor.role === "ROLE_DISTRIBUTOR"
+    );
 
     res.json(distributors);
   } catch (err) {
@@ -31,11 +34,14 @@ router.get("/", auth, async (req, res) => {
 });
 
 //get All Distributors By User Id
-router.get("/list", auth, async (req, res) => {
+router.get("/list/:id", auth, async (req, res) => {
   try {
     const distributors = await (
-      await Distributor.find({ user: req.params.id })
-    ).filter((distributor) => distributor.isActive === true);
+      await Distributor.find({ createdBy: req.params.id })
+    ).filter(
+      (distributor) =>
+        distributor.isActive === true && distributor.role === "ROLE_DISTRIBUTOR"
+    );
 
     res.json(distributors);
   } catch (err) {
@@ -47,7 +53,7 @@ router.get("/list", auth, async (req, res) => {
   }
 });
 
-// get distributor by id
+// get distributor by distributor id
 router.get("/:id", async (req, res) => {
   try {
     const distributor = await Distributor.findById(req.params.id);
@@ -65,7 +71,7 @@ router.get("/:id", async (req, res) => {
 router.post("/", auth, async (req, res) => {
   const auth = req.user;
   const user = new Distributor(
-    Object.assign(req.body, { role: role.Distributor }, { user: auth._id })
+    Object.assign(req.body, { role: role.Distributor }, { createdBy: auth._id })
   );
   try {
     const email = user.email;
@@ -105,7 +111,7 @@ router.post("/", auth, async (req, res) => {
 
     res.status(200).json({
       success: true,
-      token: `Bearer ${token}`,
+      token: `${token}`,
       message: `Distributor has been registered successfully!`,
       distributor: registeredUser,
     });

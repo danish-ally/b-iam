@@ -1,7 +1,5 @@
-const { Long } = require("mongodb");
 const Mongoose = require("mongoose");
 const role = require("../helpers/role");
-
 const { Schema } = Mongoose;
 
 // User Schema
@@ -12,8 +10,12 @@ const UserSchema = new Schema({
     auto: true,
   },
 
-  code: {
-    type: String,
+  empCode: {
+    type: Number,
+  },
+
+  shopCode: {
+    type: Number,
   },
 
   email: {
@@ -22,10 +24,7 @@ const UserSchema = new Schema({
       return this.provider !== "email" ? false : true;
     },
   },
-  code: {
-    type: String,
-    // unique: true,
-  },
+
   firstName: {
     type: String,
     required: true,
@@ -46,7 +45,7 @@ const UserSchema = new Schema({
     default: role.Member,
   },
 
-  user: {
+  createdBy: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
@@ -74,6 +73,23 @@ const UserSchema = new Schema({
 
   isPanVerified: {
     type: Boolean,
+  },
+
+  isPointOfContact: {
+    type: Boolean,
+  },
+  pocFirstName: {
+    type: String,
+  },
+  pocLastName: {
+    type: String,
+  },
+
+  pocPhoneNo: {
+    type: String,
+  },
+  pocEmail: {
+    type: String,
   },
 
   businessName: {

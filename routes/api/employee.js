@@ -15,10 +15,10 @@ const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } =
 router.post("/new", auth, async (req, res) => {
   const auth = req.user;
   const email = req.body.email;
-  const code = req.body.code;
+  const empCode = req.body.empCode;
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
-  const username = firstName + code;
+  const username = firstName + empCode;
   const password = req.body.password;
   const user = auth._id;
 
@@ -28,7 +28,7 @@ router.post("/new", auth, async (req, res) => {
         .status(400)
         .json({ error: "You must enter an email address." });
     }
-    if (!code) {
+    if (!empCode) {
       return res.status(400).json({ error: "You must enter an code" });
     }
 
@@ -39,8 +39,9 @@ router.post("/new", auth, async (req, res) => {
     if (!password) {
       return res.status(400).json({ error: "You must enter a password." });
     }
+    console.log("first")
 
-    const existingCode = await User.findOne({ code });
+    const existingCode = await User.findOne({ empCode });
 
     if (existingCode) {
       return res.status(400).json({ error: "That code is already in use." });
@@ -56,7 +57,7 @@ router.post("/new", auth, async (req, res) => {
 
     const emp = new User({
       email,
-      code,
+      empCode,
       password,
       firstName,
       lastName,
