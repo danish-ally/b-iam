@@ -170,4 +170,40 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// getAllDistributorByIdAndDateSortByDate
+
+router.get("/user/list/:id", async (req, res) => {
+  try {
+    let { startDate } = req.query;
+
+    if (!startDate) {
+      return res.status(400).json({
+        status: "failure",
+        message: "Please ensure you gave date",
+      });
+    }
+
+    const distributors = await (
+      await Distributor.find({
+        user: req.params.id,
+        created: {
+          $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
+          $lt: new Date(new Date(startDate).setHours(23, 59, 59)),
+        },
+      }).sort({ created: -1 })
+    ).filter(
+      (distributor) =>
+        distributor.isActive === true && distributor.role === "ROLE_DISTRIBUTOR"
+    );
+
+    res.json(distributors);
+  } catch (err) {
+    if (err) {
+      return res.status(400).json({
+        error: "Your request could not be processed. Please try again.",
+      });
+    }
+  }
+});
+
 module.exports = router;

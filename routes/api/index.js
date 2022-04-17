@@ -4,6 +4,7 @@ const authRoutes = require("./auth");
 const leadRoutes = require("./lead");
 const employeeRoutes = require("./employee");
 const distributorRoutes = require("./distributor");
+const attendanceRoutes = require("./attendance");
 
 // lead routes
 router.use("/lead", leadRoutes);
@@ -13,6 +14,7 @@ router.use("/auth", authRoutes);
 router.use("/employee", employeeRoutes);
 // employee routes
 router.use("/distributor", distributorRoutes);
-
+// attendancee routes
+router.use("/attendance", attendanceRoutes);
 
 module.exports = router;

@@ -39,7 +39,7 @@ router.post("/new", auth, async (req, res) => {
     if (!password) {
       return res.status(400).json({ error: "You must enter a password." });
     }
-    console.log("first")
+    console.log("first");
 
     const existingCode = await User.findOne({ empCode });
 
