@@ -187,4 +187,50 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// assign pincode
+router.put("/assigned/pincode/:id", async (req, res) => {
+  try {
+    const employeeId = req.params.id;
+    const update = req.body;
+    const query = { _id: employeeId };
+
+    await User.findOneAndUpdate(query, update, {
+      new: true,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Successfully assiggned pincode!",
+    });
+  } catch (error) {
+    res.status(400).json({
+      error: "Your request could not be processed. Please try again.",
+    });
+  }
+});
+
+// clear assign pincode
+router.put("/assigned/pincode/clear/:id", async (req, res) => {
+  try {
+    const employeeId = req.params.id;
+    const update = {
+      assignedPincode: [],
+    };
+    const query = { _id: employeeId };
+
+    await User.findOneAndUpdate(query, update, {
+      new: true,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Successfully cleared assiggned pincode!",
+    });
+  } catch (error) {
+    res.status(400).json({
+      error: "Your request could not be processed. Please try again.",
+    });
+  }
+});
+
 module.exports = router;

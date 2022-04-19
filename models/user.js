@@ -124,6 +124,12 @@ const UserSchema = new Schema({
     type: Boolean,
   },
 
+  assignedPincode: [
+    {
+      type: String,
+    },
+  ],
+
   isActive: {
     type: Boolean,
     default: true,
