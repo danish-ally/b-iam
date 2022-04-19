@@ -18,8 +18,7 @@ const AttendanceSchema = new Schema({
   },
 
   date: {
-    type: Date,
-    default: Date.now,
+    type: String,
   },
 
   checkIn: {
@@ -37,6 +36,10 @@ const AttendanceSchema = new Schema({
   isActive: {
     type: Boolean,
     default: true,
+  },
+  created: {
+    type: Date,
+    default: Date.now,
   },
 });
 
