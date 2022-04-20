@@ -85,4 +85,21 @@ router.put("/", auth, async (req, res) => {
   }
 });
 
+// get All attendance by user Id
+router.get("/list/:id", async (req, res) => {
+  try {
+    const attendances = await (
+      await Attendance.find({ user: req.params.id }).sort({ created: -1 })
+    ).filter((attendace) => attendace.isActive === true);
+
+    res.json(attendances);
+  } catch (err) {
+    if (err) {
+      return res.status(400).json({
+        error: "Your request could not be processed. Please try again.",
+      });
+    }
+  }
+});
+
 module.exports = router;

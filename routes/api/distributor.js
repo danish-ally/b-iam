@@ -170,13 +170,63 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// getAllDistributorByIdAndDateSortByDate
+// current day (Today) getAllDistributorByIdAndDateSortByDate
 
 router.get("/user/list/:id", async (req, res) => {
   try {
+    let todayDate = new Date();
+
+    let myDate =
+      todayDate.getUTCFullYear() +
+      "/" +
+      (todayDate.getMonth() + 1) +
+      "/" +
+      todayDate.getUTCDate();
+
+    if (!myDate) {
+      return res.status(400).json({
+        status: "failure",
+        message: "Please ensure you gave date",
+      });
+    }
+
+    const distributors = await (
+      await Distributor.find({
+        user: req.params.id,
+        created: {
+          $gte: new Date(new Date(myDate).setHours(00, 00, 00)),
+          $lt: new Date(new Date(myDate).setHours(23, 59, 59)),
+        },
+      }).sort({ created: -1 })
+    ).filter(
+      (distributor) =>
+        distributor.isActive === true && distributor.role === "ROLE_DISTRIBUTOR"
+    );
+
+    res.json(distributors);
+  } catch (err) {
+    if (err) {
+      return res.status(400).json({
+        error: "Your request could not be processed. Please try again.",
+      });
+    }
+  }
+});
+
+// getAllDistributorByIdAndDateSortByDate by start date and end date
+router.get("/user/list/dates/:id", async (req, res) => {
+  try {
     let { startDate } = req.query;
+    let { endDate } = req.query;
 
     if (!startDate) {
+      return res.status(400).json({
+        status: "failure",
+        message: "Please ensure you gave date",
+      });
+    }
+
+    if (!endDate) {
       return res.status(400).json({
         status: "failure",
         message: "Please ensure you gave date",
@@ -188,7 +238,7 @@ router.get("/user/list/:id", async (req, res) => {
         user: req.params.id,
         created: {
           $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
-          $lt: new Date(new Date(startDate).setHours(23, 59, 59)),
+          $lt: new Date(new Date(endDate).setHours(23, 59, 59)),
         },
       }).sort({ created: -1 })
     ).filter(
