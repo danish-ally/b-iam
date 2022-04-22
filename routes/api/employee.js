@@ -18,9 +18,10 @@ router.post("/new", auth, async (req, res) => {
   const empCode = req.body.empCode;
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
-  const username = firstName + empCode;
+  const username = lastName + empCode;
   const password = req.body.password;
-  const user = auth._id;
+  const createdBy = auth.id;
+  console.log(createdBy);
 
   try {
     if (!email) {
@@ -62,7 +63,7 @@ router.post("/new", auth, async (req, res) => {
       firstName,
       lastName,
       username,
-      user,
+      createdBy,
       role: role.Employee,
     });
 
@@ -91,7 +92,7 @@ router.post("/new", auth, async (req, res) => {
         username: registeredUser.username,
         email: registeredUser.email,
         role: registeredUser.role,
-        user,
+        createdBy,
       },
     });
   } catch (error) {
