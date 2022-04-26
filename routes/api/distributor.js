@@ -9,6 +9,8 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const passport = require("passport");
 const mailgun = require("../../services/mailgun");
+const User = require("../../models/user");
+
 
 const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } =
   key.jwt;
@@ -70,6 +72,12 @@ router.get("/:id", async (req, res) => {
 // Add distributor
 router.post("/", auth, async (req, res) => {
   const auth = req.user;
+  const distributorId = req.body.distributorId;
+  const existingCode = await User.findOne({ distributorId });
+
+  if (existingCode) {
+    return res.status(400).json({ error: "That Distributor id is already in use." });
+  }
   const user = new Distributor(
     Object.assign(req.body, { role: role.Distributor }, { createdBy: auth._id })
   );

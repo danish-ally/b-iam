@@ -146,7 +146,14 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const employeeId = req.params.id;
-    const update = req.body;
+    const userName = req.body.lastName + req.body.empCode;
+    const update = {
+      empCode: req.body.empCode,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      username: userName,
+    };
     const query = { _id: employeeId };
 
     await User.findOneAndUpdate(query, update, {
