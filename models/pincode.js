@@ -7,7 +7,10 @@ const PincodeSchema = new Schema({
     type: Schema.ObjectId,
     auto: true,
   },
-  name: {
+  label: {
+    type: String,
+  },
+  value: {
     type: String,
     required: true,
     unique: true,
