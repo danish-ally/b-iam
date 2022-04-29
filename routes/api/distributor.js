@@ -10,6 +10,8 @@ const crypto = require("crypto");
 const passport = require("passport");
 const mailgun = require("../../services/mailgun");
 const User = require("../../models/user");
+var generator = require('generate-password');
+
 
 
 const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } =
@@ -74,17 +76,21 @@ router.post("/", auth, async (req, res) => {
   const auth = req.user;
   const distributorId = req.body.distributorId;
   const existingCode = await User.findOne({ distributorId });
+  var pwd = generator.generate({
+    length: 10,
+    numbers: true
+  });
+  
 
   if (existingCode) {
     return res.status(400).json({ error: "That Distributor id is already in use." });
   }
   const user = new Distributor(
-    Object.assign(req.body, { role: role.Distributor }, { createdBy: auth._id })
+    Object.assign(req.body, { role: role.Distributor }, {password: pwd},{ createdBy: auth._id })
   );
   try {
     const email = user.email;
     const password1 = user.password;
-
     const existingUser = await Distributor.findOne({ email });
 
     if (existingUser) {
