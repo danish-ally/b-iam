@@ -3,9 +3,11 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/auth");
 const Attendance = require("../../models/attendance");
+const cloudinary = require("../../utils/cloudinary");
+const upload = require("../../utils/multer");
 
 //  attendance
-router.put("/", auth, async (req, res) => {
+router.put("/", upload.single("image"), auth, async (req, res) => {
   try {
     const auth = req.user;
 
@@ -36,13 +38,17 @@ router.put("/", auth, async (req, res) => {
 
     if (attendances.length === 0) {
       console.log("No check in");
+      const result = await cloudinary.uploader.upload(req.file.path);
+      console.log(result);
       const attendance = new Attendance(
         Object.assign(
           req.body,
           { user: auth._id },
           { isOnline: true },
           { date: myDate },
-          { checkIn: todayDate }
+          { checkIn: todayDate },
+          { img: result.secure_url },
+          { cloudinary_id: result.public_id }
         )
       );
       const a1 = await attendance.save();

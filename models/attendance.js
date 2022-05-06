@@ -7,9 +7,14 @@ const AttendanceSchema = new Schema({
     type: Schema.ObjectId,
     auto: true,
   },
-  image: {
+  img: {
     type: String,
-    required: true,
+    // required: true,
+  },
+
+  cloudinary_id: {
+    type: String,
+    // required: true,
   },
 
   user: {
