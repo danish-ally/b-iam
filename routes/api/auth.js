@@ -7,6 +7,7 @@ const passport = require("passport");
 const auth = require("../../middleware/auth");
 const User = require("../../models/user");
 const key = require("../../config/key");
+const axios = require("axios").default;
 
 const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } =
   key.jwt;
@@ -14,6 +15,7 @@ const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } =
 router.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  // let status;
 
   if (!email) {
     return res.status(400).json({ error: "You must enter an email address." });
@@ -41,17 +43,16 @@ router.post("/login", (req, res) => {
           accessSecret,
           { expiresIn: accessTokenLife },
           (err, AccessToken) => {
-            res.status(200).json({
-              success: true,
-              AccessToken: `${AccessToken}`,
-              user: {
-                id: user.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                role: user.role,
-              },
-            });
+            axios
+              .get(`http://localhost:9000/api/attendance/status/${user.id}`)
+              .then(function (response) {
+                res.status(200).json({
+                  success: true,
+                  AccessToken: `${AccessToken}`,
+                  isOnline: response.data.isOnline,
+                  user: user,
+                });
+              });
           }
         );
 
@@ -91,14 +92,13 @@ router.post("/register", async (req, res) => {
         .json({ error: "That email address is already in use." });
     }
 
-    console.log("first")
+    console.log("first");
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(user.password, salt);
 
     user.password = hash;
 
-
-    console.log("first")
+    console.log("first");
     const registeredUser = await user.save();
     const payload = {
       id: registeredUser._id,

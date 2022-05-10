@@ -108,4 +108,61 @@ router.get("/list/:id", async (req, res) => {
   }
 });
 
+// get online status
+router.get("/status/:id", async (req, res) => {
+  try {
+    // const auth = req.user;
+    console.log("object");
+
+    let todayDate = new Date();
+
+    // todayDate.toLocaleString("en-US", { timeZone: update.timeZone });
+
+    let myDate =
+      todayDate.getUTCFullYear() +
+      "/" +
+      (todayDate.getMonth() + 1) +
+      "/" +
+      todayDate.getUTCDate();
+
+    // console.log(myDate);
+    // console.log(todayDate);
+    // console.log(update.image);
+
+    const attendances = await await Attendance.find({
+      user: req.params.id,
+      date: myDate,
+    });
+
+    let status = false;
+    if (attendances.length === 0) {
+      res.status(200).json({
+        success: true,
+        isOnline: status,
+      });
+    }
+
+    if (attendances.length === 1) {
+      status = true;
+      res.status(200).json({
+        success: true,
+        isOnline: status,
+      });
+    }
+
+    if (attendances.length === 2) {
+      res.status(200).json({
+        success: true,
+        isOnline: status,
+      });
+    }
+  } catch (err) {
+    if (err) {
+      return res.status(400).json({
+        error: "Your request could not be processed. Please try again.",
+      });
+    }
+  }
+});
+
 module.exports = router;
