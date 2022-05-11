@@ -209,8 +209,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// current day (Today) getAllDistributorByIdAndDateSortByDate
-
+// no. of distributor added today
 router.get("/user/list/:id", async (req, res) => {
   try {
     let todayDate = new Date();
@@ -242,7 +241,7 @@ router.get("/user/list/:id", async (req, res) => {
         distributor.isActive === true && distributor.role === "ROLE_DISTRIBUTOR"
     );
 
-    res.json(distributors);
+    res.json(distributors.length);
   } catch (err) {
     if (err) {
       return res.status(400).json({

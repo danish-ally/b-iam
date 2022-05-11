@@ -43,16 +43,11 @@ router.post("/login", (req, res) => {
           accessSecret,
           { expiresIn: accessTokenLife },
           (err, AccessToken) => {
-            axios
-              .get(`http://localhost:9000/api/attendance/status/${user.id}`)
-              .then(function (response) {
-                res.status(200).json({
-                  success: true,
-                  AccessToken: `${AccessToken}`,
-                  isOnline: response.data.isOnline,
-                  user: user,
-                });
-              });
+            res.status(200).json({
+              success: true,
+              AccessToken: `${AccessToken}`,
+              user: user,
+            });
           }
         );
 

@@ -8,6 +8,7 @@ const auth = require("../../middleware/auth");
 const User = require("../../models/user");
 const key = require("../../config/key");
 const role = require("../../helpers/role");
+const axios = require("axios").default;
 
 const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } =
   key.jwt;
@@ -252,6 +253,34 @@ router.put("/assigned/pincode/clear/:id", async (req, res) => {
       success: true,
       message: "Successfully cleared assiggned pincode!",
     });
+  } catch (error) {
+    res.status(400).json({
+      error: "Your request could not be processed. Please try again.",
+    });
+  }
+});
+
+// get assignPincode and online status
+router.get("/status/:id", async (req, res) => {
+  try {
+    const employeeId = req.params.id;
+
+    const employeeDoc = await User.findOne({ _id: employeeId });
+
+    if (!employeeDoc) {
+      res.status(404).json({
+        message: `Cannot find Employee with the id: ${employeeId}.`,
+      });
+    }
+
+    axios
+      .get(`http://localhost:9000/api/attendance/status/${employeeId}`)
+      .then(function (response) {
+        res.status(200).json({
+          isOnline: response.data.isOnline,
+          assignedPincode: employeeDoc.assignedPincode,
+        });
+      });
   } catch (error) {
     res.status(400).json({
       error: "Your request could not be processed. Please try again.",
