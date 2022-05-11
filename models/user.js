@@ -121,11 +121,9 @@ const UserSchema = new Schema({
     type: Boolean,
   },
 
-  assignedPincode: [
-    {
-      type: String,
-    },
-  ],
+  assignedPincode: {
+    type: String,
+  },
 
   isActive: {
     type: Boolean,

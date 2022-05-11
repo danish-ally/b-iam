@@ -119,6 +119,24 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
+// get All employee by city
+router.get("/city", auth, async (req, res) => {
+  const cityName = req.body.city;
+  try {
+    const employees = await (
+      await User.find({ city: cityName })
+    ).filter((user) => user.isActive === true && user.role === "ROLE_EMPLOYEE");
+
+    res.json(employees);
+  } catch (err) {
+    if (err) {
+      return res.status(400).json({
+        error: "Your request could not be processed. Please try again.",
+      });
+    }
+  }
+});
+
 // get Emp by id
 router.get("/:id", async (req, res) => {
   try {

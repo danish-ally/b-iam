@@ -10,9 +10,7 @@ const crypto = require("crypto");
 const passport = require("passport");
 const mailgun = require("../../services/mailgun");
 const User = require("../../models/user");
-var generator = require('generate-password');
-
-
+var generator = require("generate-password");
 
 const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } =
   key.jwt;
@@ -22,6 +20,27 @@ router.get("/", auth, async (req, res) => {
   try {
     const distributors = await (
       await Distributor.find()
+    ).filter(
+      (distributor) =>
+        distributor.isActive === true && distributor.role === "ROLE_DISTRIBUTOR"
+    );
+
+    res.json(distributors);
+  } catch (err) {
+    if (err) {
+      return res.status(400).json({
+        error: "Your request could not be processed. Please try again.",
+      });
+    }
+  }
+});
+
+// get All distributor by city
+router.get("/city", auth, async (req, res) => {
+  const cityName = req.body.city;
+  try {
+    const distributors = await (
+      await Distributor.find({ city: cityName })
     ).filter(
       (distributor) =>
         distributor.isActive === true && distributor.role === "ROLE_DISTRIBUTOR"
@@ -78,15 +97,21 @@ router.post("/", auth, async (req, res) => {
   const existingCode = await User.findOne({ distributorId });
   var pwd = generator.generate({
     length: 10,
-    numbers: true
+    numbers: true,
   });
-  
 
   if (existingCode) {
-    return res.status(400).json({ error: "That Distributor id is already in use." });
+    return res
+      .status(400)
+      .json({ error: "That Distributor id is already in use." });
   }
   const user = new Distributor(
-    Object.assign(req.body, { role: role.Distributor }, {password: pwd},{ createdBy: auth._id })
+    Object.assign(
+      req.body,
+      { role: role.Distributor },
+      { password: pwd },
+      { createdBy: auth._id }
+    )
   );
   try {
     const email = user.email;
