@@ -44,7 +44,7 @@ router.post("/login", (req, res) => {
           { expiresIn: accessTokenLife },
           (err, AccessToken) => {
             axios
-              .get(`http://localhost:9000/api/attendance/status/${user.id}`)
+              .get(process.env.IAMURL +`/api/attendance/status/${user.id}`)
               .then(function (response) {
                 res.status(200).json({
                   success: true,
