@@ -37,6 +37,7 @@ router.post("/", async (req, res) => {
     if (err) {
       return res.status(400).json({
         error: "Your request could not be processed. Please try again.",
+        msg: err
       });
     }
   }
