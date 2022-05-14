@@ -12,7 +12,6 @@ const PincodeSchema = new Schema({
   },
   value: {
     type: String,
-    required: true,
     unique: true,
   },
   isActive: {
