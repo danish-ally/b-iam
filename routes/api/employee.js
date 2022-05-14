@@ -241,7 +241,7 @@ router.put("/assigned/pincode/clear/:id", async (req, res) => {
   try {
     const employeeId = req.params.id;
     const update = {
-      assignedPincode: [],
+      assignedPincode: "",
     };
     const query = { _id: employeeId };
 
