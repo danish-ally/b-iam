@@ -274,7 +274,7 @@ router.get("/status/:id", async (req, res) => {
     }
 
     axios
-      .get(`http://localhost:9000/api/attendance/status/${employeeId}`)
+      .get(IAMURL +`/api/attendance/status/${employeeId}`)
       .then(function (response) {
         res.status(200).json({
           isOnline: response.data.isOnline,
