@@ -273,7 +273,8 @@ router.get("/status/:id", async (req, res) => {
       });
     }
 
-    axios
+    try{
+      axios
       .get(IAMURL +`/api/attendance/status/${employeeId}`)
       .then(function (response) {
         res.status(200).json({
@@ -281,9 +282,15 @@ router.get("/status/:id", async (req, res) => {
           assignedPincode: employeeDoc.assignedPincode,
         });
       });
+    } catch (err){
+      res.status(500).json({
+        error: err,
+      });
+    }
+    
   } catch (error) {
-    res.status(400).json({
-      error: "Your request could not be processed. Please try again.",
+    res.status(500).json({
+      error: error,
     });
   }
 });
