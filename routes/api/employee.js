@@ -273,21 +273,30 @@ router.get("/status/:id", async (req, res) => {
       });
     }
 
-    try{
+    console.log(employeeDoc);
+
+    if (employeeDoc.assignedPincode) {
       axios
-      .get(IAMURL +`/api/attendance/status/${employeeId}`)
-      .then(function (response) {
-        res.status(200).json({
-          isOnline: response.data.isOnline,
-          assignedPincode: employeeDoc.assignedPincode,
+        .get(
+          `https://byit-be-iam.herokuapp.com/api/attendance/status/${employeeId}`
+        )
+        .then(function (response) {
+          res.status(200).json({
+            isOnline: response.data.isOnline,
+            assignedPincode: employeeDoc.assignedPincode,
+          });
         });
-      });
-    } catch (err){
-      res.status(500).json({
-        error: err,
-      });
+    } else {
+      axios
+        .get(
+          `https://byit-be-iam.herokuapp.com/api/attendance/status/${employeeId}`
+        )
+        .then(function (response) {
+          res.status(200).json({
+            isOnline: response.data.isOnline,
+          });
+        });
     }
-    
   } catch (error) {
     res.status(500).json({
       error: error,
