@@ -15,7 +15,7 @@ app.use(cors());
 app.use(passport.initialize());
 
 mongoose
-  .connect(process.env.DATABASE_ACCESS, {
+  .connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

@@ -25,6 +25,13 @@ router.post("/", async (req, res) => {
   // const user = req.user;
 
   const pincode = new Pincode(Object.assign(req.body));
+  console.log(pincode.value);
+  const value = pincode.value
+  const existingPincode = await Pincode.findOne({value});
+
+  if (existingPincode) {
+    return res.status(400).json({ error: "That pincode is already added." });
+  }
 
   try {
     const p1 = await pincode.save();
@@ -37,7 +44,7 @@ router.post("/", async (req, res) => {
     if (err) {
       return res.status(400).json({
         error: "Your request could not be processed. Please try again.",
-        msg: err
+        msg: err,
       });
     }
   }
