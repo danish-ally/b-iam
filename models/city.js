@@ -1,12 +1,17 @@
 const Mongoose = require("mongoose");
 const { Schema } = Mongoose;
 
-// Lead Schema
-const FilterCitySchema = new Schema(
+// City Schema
+const citySchema = new Schema(
   {
     _id: {
       type: Schema.ObjectId,
       auto: true,
+    },
+
+    cityCode: {
+      type: String,
+      unique: true,
     },
     name: {
       type: String,
@@ -25,4 +30,4 @@ const FilterCitySchema = new Schema(
   }
 );
 
-module.exports = Mongoose.model("FilterCity", FilterCitySchema);
+module.exports = Mongoose.model("city", citySchema);
