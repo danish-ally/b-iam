@@ -17,15 +17,25 @@ const { accessSecret, accessTokenLife, refreshSecret, refreshTokenLife } =
 
 // get All distributor
 router.get("/", auth, async (req, res) => {
-  try {
-    const distributors = await (
-      await Distributor.find()
-    ).filter(
-      (distributor) =>
-        distributor.isActive === true && distributor.role === "ROLE_DISTRIBUTOR"
-    );
+  const cityName = req.query.city;
 
-    res.json(distributors);
+  try {
+    if (!cityName) {
+      const distributors = await (
+        await User.find()
+      ).filter(
+        (user) => user.role === "ROLE_DISTRIBUTOR" && user.isActive === true
+      );
+      res.json(distributors);
+    } else {
+      const distributors = await (
+        await User.find({ city: cityName })
+      ).filter(
+        (user) => user.isActive === true && user.role === "ROLE_DISTRIBUTOR"
+      );
+
+      res.json(distributors);
+    }
   } catch (err) {
     if (err) {
       return res.status(400).json({

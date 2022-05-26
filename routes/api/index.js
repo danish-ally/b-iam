@@ -6,6 +6,7 @@ const employeeRoutes = require("./employee");
 const distributorRoutes = require("./distributor");
 const attendanceRoutes = require("./attendance");
 const pincodeRoutes = require("./pincode");
+const cityRoutes = require("./city");
 
 // lead routes
 router.use("/lead", leadRoutes);
@@ -19,5 +20,7 @@ router.use("/distributor", distributorRoutes);
 router.use("/attendance", attendanceRoutes);
 // pincode routes
 router.use("/pincode", pincodeRoutes);
+// city routes
+router.use("/city", cityRoutes);
 
 module.exports = router;

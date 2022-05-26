@@ -6,7 +6,7 @@ const routes = require("./routes");
 const cors = require("cors");
 const passport = require("passport");
 
-const url = "mongodb://localhost/byit-be-iam";
+// const url = "mongodb://localhost/byit-be-iam";
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
@@ -28,5 +28,3 @@ app.use(routes);
 app.listen(port, () => {
   console.log(`Server listening on ${port}`);
 });
-
-
