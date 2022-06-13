@@ -22,6 +22,7 @@ router.post("/new", auth, async (req, res) => {
   const username = lastName + empCode;
   const password = req.body.password;
   const createdBy = auth.id;
+  const city = req.body.city
   console.log(createdBy);
 
   try {
@@ -40,6 +41,9 @@ router.post("/new", auth, async (req, res) => {
 
     if (!password) {
       return res.status(400).json({ error: "You must enter a password." });
+    }
+    if (!city) {
+      return res.status(400).json({ error: "You must enter a city." });
     }
     console.log("first");
 
@@ -65,6 +69,7 @@ router.post("/new", auth, async (req, res) => {
       lastName,
       username,
       createdBy,
+      city,
       role: role.Employee,
     });
 
@@ -93,6 +98,7 @@ router.post("/new", auth, async (req, res) => {
         username: registeredUser.username,
         email: registeredUser.email,
         role: registeredUser.role,
+        city: registeredUser.city,
         createdBy,
       },
     });
