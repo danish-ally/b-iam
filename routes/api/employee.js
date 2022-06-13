@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
+var bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const passport = require("passport");
@@ -22,7 +22,8 @@ router.post("/new", auth, async (req, res) => {
   const username = lastName + empCode;
   const password = req.body.password;
   const createdBy = auth.id;
-  const city = req.body.city
+  const city = req.body.city;
+  const phoneNo = req.body.phoneNo
   console.log(createdBy);
 
   try {
@@ -44,6 +45,9 @@ router.post("/new", auth, async (req, res) => {
     }
     if (!city) {
       return res.status(400).json({ error: "You must enter a city." });
+    }
+    if (!phoneNo) {
+      return res.status(400).json({ error: "You must enter a Phone No." });
     }
     console.log("first");
 
@@ -70,6 +74,7 @@ router.post("/new", auth, async (req, res) => {
       username,
       createdBy,
       city,
+      phoneNo,
       role: role.Employee,
     });
 
@@ -99,6 +104,7 @@ router.post("/new", auth, async (req, res) => {
         email: registeredUser.email,
         role: registeredUser.role,
         city: registeredUser.city,
+        phoneNo: registeredUser.phoneNo,
         createdBy,
       },
     });
@@ -302,6 +308,56 @@ router.get("/status/:id", async (req, res) => {
       error: error,
     });
   }
+});
+
+// update password
+router.post("/reset", auth, (req, res) => {
+  const email = req.user.email;
+  const password = req.body.password;
+
+  if (!password) {
+    return res.status(400).json({ error: "You must enter a password." });
+  }
+
+  User.findOne({ email }, (err, existingUser) => {
+    if (err || existingUser === null) {
+      return res.status(400).json({
+        error:
+          "Your request could not be processed as entered. Please try again.",
+      });
+    }
+
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(req.body.password, salt, (err, hash) => {
+        if (err) {
+          return res.status(400).json({
+            error:
+              "Your request could not be processed as entered. Please try again.",
+          });
+        }
+        req.body.password = hash;
+
+        existingUser.password = req.body.password;
+
+        existingUser.save(async (err) => {
+          if (err) {
+            return res.status(400).json({
+              error:
+                "Your request could not be processed as entered. Please try again.",
+            });
+          }
+
+          // await mailgun.sendEmail(existingUser.email, 'reset-confirmation');
+
+          res.status(200).json({
+            success: true,
+            message:
+              "Password changed successfully. Please login with your new password.",
+          });
+        });
+      });
+    });
+  });
 });
 
 module.exports = router;
