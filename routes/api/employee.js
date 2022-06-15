@@ -97,7 +97,7 @@ router.post("/new", auth, async (req, res) => {
       token: `Bearer ${token}`,
       employee: {
         id: registeredUser.id,
-        code: registeredUser.code,
+        empCode: registeredUser.empCode,
         firstName: registeredUser.firstName,
         lastName: registeredUser.lastName,
         username: registeredUser.username,
@@ -178,6 +178,8 @@ router.put("/:id", async (req, res) => {
       lastName: req.body.lastName,
       email: req.body.email,
       username: userName,
+      phoneNo: req.body.phoneNO,
+      city: req.body.city,
     };
     const query = { _id: employeeId };
 
