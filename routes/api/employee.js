@@ -178,7 +178,7 @@ router.put("/:id", async (req, res) => {
       lastName: req.body.lastName,
       email: req.body.email,
       username: userName,
-      phoneNo: req.body.phoneNO,
+      phoneNo: req.body.phoneNo,
       city: req.body.city,
     };
     const query = { _id: employeeId };
