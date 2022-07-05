@@ -104,7 +104,7 @@ router.get("/:id", async (req, res) => {
 router.post("/", auth, async (req, res) => {
   const auth = req.user;
   const distributorId = req.body.distributorId;
-  var pwd = password;
+  var pwd = req.body.password;
 
   const existingCode = await User.findOne({ distributorId });
   // var pwd = generator.generate({
