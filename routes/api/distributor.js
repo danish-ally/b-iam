@@ -104,11 +104,13 @@ router.get("/:id", async (req, res) => {
 router.post("/", auth, async (req, res) => {
   const auth = req.user;
   const distributorId = req.body.distributorId;
+  var pwd = password;
+
   const existingCode = await User.findOne({ distributorId });
-  var pwd = generator.generate({
-    length: 10,
-    numbers: true,
-  });
+  // var pwd = generator.generate({
+  //   length: 10,
+  //   numbers: true,
+  // });
 
   if (existingCode) {
     return res
@@ -145,14 +147,14 @@ router.post("/", auth, async (req, res) => {
 
     console.log(password1);
 
-    await mailgun.sendEmail(
-      registeredUser.email,
-      password1,
-      "signup",
-      null,
-      registeredUser
-    );
-    console.log("distributor");
+    // await mailgun.sendEmail(
+    //   registeredUser.email,
+    //   password1,
+    //   "signup",
+    //   null,
+    //   registeredUser
+    // );
+    // console.log("distributor");
 
     const token = jwt.sign(payload, accessSecret, {
       expiresIn: accessTokenLife,
