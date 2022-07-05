@@ -306,4 +306,27 @@ router.get("/user/list/dates/:id", async (req, res) => {
   }
 });
 
+// Check email exist or not
+router.post("/check/email", (req, res) => {
+  const email = req.body.email;
+  // let status;
+
+  if (!email) {
+    return res.status(400).json({ error: "You must enter an email address." });
+  }
+
+  User.findOne({ email }).then((user) => {
+    if (!user) {
+      return res
+        .status(400)
+        .send({ error: "No user found for this email address." });
+    } else {
+      res.status(200).json({
+        success: true,
+        message: "User exist",
+      });
+    }
+  });
+});
+
 module.exports = router;
