@@ -104,11 +104,13 @@ router.get("/:id", async (req, res) => {
 router.post("/", auth, async (req, res) => {
   const auth = req.user;
   const distributorId = req.body.distributorId;
+  var pwd = req.body.password;
+
   const existingCode = await User.findOne({ distributorId });
-  var pwd = generator.generate({
-    length: 10,
-    numbers: true,
-  });
+  // var pwd = generator.generate({
+  //   length: 10,
+  //   numbers: true,
+  // });
 
   if (existingCode) {
     return res
@@ -145,14 +147,14 @@ router.post("/", auth, async (req, res) => {
 
     console.log(password1);
 
-    await mailgun.sendEmail(
-      registeredUser.email,
-      password1,
-      "signup",
-      null,
-      registeredUser
-    );
-    console.log("distributor");
+    // await mailgun.sendEmail(
+    //   registeredUser.email,
+    //   password1,
+    //   "signup",
+    //   null,
+    //   registeredUser
+    // );
+    // console.log("distributor");
 
     const token = jwt.sign(payload, accessSecret, {
       expiresIn: accessTokenLife,
@@ -302,6 +304,29 @@ router.get("/user/list/dates/:id", async (req, res) => {
       });
     }
   }
+});
+
+// Check email exist or not
+router.post("/check/email", (req, res) => {
+  const email = req.body.email;
+  // let status;
+
+  if (!email) {
+    return res.status(400).json({ error: "You must enter an email address." });
+  }
+
+  User.findOne({ email }).then((user) => {
+    if (!user) {
+      return res
+        .status(400)
+        .send({ error: "No user found for this email address." });
+    } else {
+      res.status(200).json({
+        success: true,
+        message: "User exist",
+      });
+    }
+  });
 });
 
 module.exports = router;
