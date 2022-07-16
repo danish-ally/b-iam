@@ -41,7 +41,12 @@ const UserSchema = new Schema({
     type: String,
     default: role.Member,
   },
-
+  gender: {
+    type: String,
+  },
+  dateOfBirth:{
+    type: Date,
+  },
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -70,23 +75,6 @@ const UserSchema = new Schema({
 
   isPanVerified: {
     type: Boolean,
-  },
-
-  isPointOfContact: {
-    type: Boolean,
-  },
-  pocFirstName: {
-    type: String,
-  },
-  pocLastName: {
-    type: String,
-  },
-
-  pocPhoneNo: {
-    type: String,
-  },
-  pocEmail: {
-    type: String,
   },
 
   businessName: {
