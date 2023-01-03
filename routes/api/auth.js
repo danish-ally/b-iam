@@ -40,7 +40,7 @@ router.post("/login", (req, res) => {
           id: user.id,
         };
 
-        jwt.sign(
+         jwt.sign(
           payload,
           accessSecret,
           { expiresIn: accessTokenLife },
